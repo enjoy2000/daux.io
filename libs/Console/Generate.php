@@ -5,7 +5,6 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Terminal;
 use Todaymade\Daux\Daux;
 
 class Generate extends DauxCommand
@@ -44,7 +43,7 @@ class Generate extends DauxCommand
 
         $daux = $this->prepareDaux($input);
 
-        $width = (new Terminal)->getWidth();
+        $width = $this->getApplication()->getTerminalDimensions()[0];
 
         // Instiantiate the processor if one is defined
         $this->prepareProcessor($daux, $input, $output, $width);
