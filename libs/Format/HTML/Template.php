@@ -109,28 +109,28 @@ class Template
         });
     }
 
-    private function renderNavigation($entries)
+    private function renderNavigation($entries, $level=1)
     {
-        $nav = '';
+        $class = $level == 1 ? 'navbar-nav mr-auto' : 'dropdown-menu';
+        $navClass = $level == 1 ? 'nav-link' : 'dropdown-item';
         foreach ($entries as $entry) {
             if (array_key_exists('children', $entry)) {
-                $icon = '<i class="Nav__arrow">&nbsp;</i>';
+                $icon = '';
 
                 if (array_key_exists('href', $entry)) {
-                    $link = '<a href="' . $entry['href'] . '" class="folder">' . $icon . $entry['title'] . '</a>';
+                    $link = '<a href="' . $entry['href'] . '" class="folder nav-link">' . $icon . $entry['title'] . '</a>';
                 } else {
-                    $link = '<a href="#" class="aj-nav folder">' . $icon . $entry['title'] . '</a>';
+                    $link = '<a href="#" data-toggle="dropdown" role="button" class="nav-link dropdown-toggle">' . $icon . $entry['title'] . '</a>';
                 }
 
-                $link .= $this->renderNavigation($entry['children']);
+                $link .= $this->renderNavigation($entry['children'], ++$level);
             } else {
-                $link = '<a href="' . $entry['href'] . '">' . $entry['title'] . '</a>';
+                $link = '<a class="'.$navClass.'" href="' . $entry['href'] . '">' . $entry['title'] . '</a>';
             }
 
-            $nav .= "<li class='Nav__item $entry[class]'>$link</li>";
+            $nav .= "<li class='nav-item $entry[class]'>$link</li>";
         }
-
-        return "<ul class='Nav'>$nav</ul>";
+        return "<ul class='$class'>$nav</ul>";
     }
 
     private function buildNavigation(Directory $tree, $path, $current_url, $base_page, $mode)
@@ -148,7 +148,7 @@ class Template
                 $nav[] = [
                     'title' => $node->getTitle(),
                     'href' => $base_page . $link,
-                    'class' => $node->isHotPath() ? 'Nav__item--active' : '',
+                    'class' => $node->isHotPath() ? 'active' : '',
                 ];
             } elseif ($node instanceof Directory) {
                 if (!$node->hasContent()) {
@@ -157,7 +157,7 @@ class Template
 
                 $folder = [
                     'title' => $node->getTitle(),
-                    'class' => $node->isHotPath() ? 'Nav__item--open' : '',
+                    'class' => $node->isHotPath() ? '' : '',
                 ];
 
                 if ($index = $node->getIndexPage()) {
@@ -169,7 +169,7 @@ class Template
                 $folder['children'] = $this->buildNavigation($node, $new_path, $current_url, $base_page, $mode);
 
                 if (!empty($folder['children'])) {
-                    $folder['class'] .= ' has-children';
+                    $folder['class'] .= ' dropdown';
                 }
 
                 $nav[] = $folder;
