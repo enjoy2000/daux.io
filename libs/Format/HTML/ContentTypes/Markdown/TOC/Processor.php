@@ -191,12 +191,14 @@ class Processor implements DocumentProcessorInterface
         $data->type = ListBlock::TYPE_UNORDERED;
 
         $list = new ListBlock($data);
-        $list->data['attributes']['class'] = 'TableOfContents';
+        $list->data['attributes']['class'] = 'nav flex-column';
 
         foreach ($entries as $entry) {
             $item = new ListItem($data);
+            $item->data['attributes']['class'] = 'nav-item';
 
             $a = new Link('#' . $entry->getId());
+            $a->data['attributes']['class'] = 'nav-link';
 
             $content = $entry->getContent();
             if ($content != null) {
